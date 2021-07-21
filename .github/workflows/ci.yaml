@@ -34,10 +34,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-    name: ${{ matrix.os }}_${{ matrix.py-version }}
+    name: testing
     steps:
       - uses: actions/checkout@v2
       - name: Build containers
         run: docker-compose up -d
+      - run: sleep 30s
       - name: Run test suite
         run: docker exec adapter-testing pytest -svv
