@@ -1,6 +1,6 @@
 # Tortiose ORM Adapter for AsyncCasbin
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/thearchitector/casbin-tortoise-adapter/ci?label=testing&style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/thearchitector/casbin-tortoise-adapter/CI?label=testing&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/thearchitector/casbin-tortoise-adapter?style=flat-square)
 
 This is an asynchronous adapter for [AsyncCasbin](https://pypi.org/project/asynccasbin) using Tortoise ORM.
