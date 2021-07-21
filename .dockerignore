@@ -1,0 +1,7 @@
+*
+!Dockerfile
+!.dockerignore
+!casbin_tortoise_adapter
+!tests
+!poetry.lock
+!pyproject.toml

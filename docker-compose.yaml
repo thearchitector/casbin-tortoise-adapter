@@ -1,0 +1,13 @@
+services:
+  test-db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: casbin_rule
+
+  test:
+    build: .
+    volumes:
+      - .:/casbin-tortoise
+    depends_on:
+      - test-db

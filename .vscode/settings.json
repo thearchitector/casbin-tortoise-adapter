@@ -1,0 +1,20 @@
+{
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "editor.tabSize": 4,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 88,
+    "prettier.printWidth": 88,
+    // python typing, formatting and linting
+    "python.pythonPath": ".venv\\Scripts\\python.exe",
+    "python.analysis.memory.keepLibraryAst": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.formatting.provider": "black",
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+}
