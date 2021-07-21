@@ -18,8 +18,12 @@ def event_loop():
 async def adapter():
     # connect to db and generate schemas
     await Tortoise.init(
-        db_url="postgres://postgres:password@test-db:5432/casbin_rule",
-        modules={"models": ["casbin_tortoise_adapter"]},
+        {
+            "connections": {
+                "default": "postgres://postgres:password@test-db:5432/casbin"
+            },
+            "apps": {"my_app": {"models": ["casbin_tortoise_adapter"]}},
+        }
     )
     await Tortoise.generate_schemas()
 

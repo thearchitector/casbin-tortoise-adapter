@@ -1,6 +1,14 @@
 import pytest
 
-from casbin_tortoise_adapter import CasbinRule, RuleFilter
+from casbin_tortoise_adapter import CasbinRule, RuleFilter, TortoiseAdapter
+
+
+def test_bad_modelclass():
+    class BadModel:
+        pass
+
+    with pytest.raises(TypeError):
+        TortoiseAdapter(modelclass=BadModel)
 
 
 @pytest.mark.asyncio

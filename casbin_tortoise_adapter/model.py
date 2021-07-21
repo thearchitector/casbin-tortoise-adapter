@@ -13,9 +13,8 @@ class CasbinRule(Model):
     v5: fields.CharField = fields.CharField(max_length=255, null=True)
 
     class Meta:
-        table = "casbin_rule"
+        table: str = "casbin_rule"
 
-    # Credit: https://git.io/Jlera
     def __str__(self):
         arr = [self.ptype]
         for v in (self.v0, self.v1, self.v2, self.v3, self.v4, self.v5):
