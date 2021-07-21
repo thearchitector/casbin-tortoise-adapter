@@ -23,7 +23,8 @@ async def adapter():
                 "default": "postgres://postgres:password@test-db:5432/casbin"
             },
             "apps": {"my_app": {"models": ["casbin_tortoise_adapter"]}},
-        }
+        },
+        _create_db=True
     )
     await Tortoise.generate_schemas()
 
