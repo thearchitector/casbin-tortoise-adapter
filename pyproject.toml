@@ -1,9 +1,13 @@
 [tool.poetry]
 name = "casbin-tortoise-adapter"
 version = "1.0.0"
-description = "Tortoise ORM for AsyncCasbin"
+description = "Tortoise ORM adapter for AsyncCasbin"
 authors = ["Elias Gabriel <me@eliasfgabriel.com>"]
 license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/thearchitector/casbin-tortoise-adapter"
+documentation = "https://github.com/thearchitector/casbin-tortoise-adapter#tortiose-orm-adapter-for-asynccasbin"
+keywords = ["casbin", "asyncio", "access control", "Tortoise ORM", "authorization"]
 
 [tool.poetry.dependencies]
 python = "^3.7"

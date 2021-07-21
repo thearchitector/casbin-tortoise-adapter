@@ -8,7 +8,7 @@ This is an asynchronous adapter for [AsyncCasbin](https://pypi.org/project/async
 ## Installation
 
 ```sh
-pip install casbin_tortoise_adapter
+pip install casbin-tortoise-adapter
 # or via your favorite dependency manager
 ```
 
