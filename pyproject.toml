@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "casbin-tortoise-adapter"
+version = "0.1.0"
+description = "Tortoise ORM for AsyncCasbin"
+authors = ["Elias Gabriel <me@eliasfgabriel.com>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+asynccasbin = "^1.1.2"
+tortoise-orm = ">=0.16.6"
+
+# linting deps (dev only)
+black = {version = "^21.7b0", optional = true}
+flake8 = {version = "^3.9.2", optional = true}
+isort = {version = "^5.9.2", optional = true}
+mypy = {version = "^0.910", optional = true}
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+pytest-asyncio = "^0.15.1"
+asyncpg = "^0.23.0"
+
+[tool.poetry.extras]
+linting = ["black", "flake8", "isort", "mypy"]
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true
+warn_return_any = true
+show_column_numbers = true
+follow_imports = "silent"
+warn_unreachable = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,95 @@
+from dataclasses import asdict
+from typing import List, Tuple
+
+from casbin.model import Model
+from casbin.persist import Adapter, load_policy_line
+from tortoise.query_utils import Q
+
+from .filter import RuleFilter
+from .model import CasbinRule
+from .typing import Rule
+
+
+class TortoiseAdapter(Adapter):
+    """An async Casbin adapter for Tortoise ORM."""
+
+    def __init__(self):
+        self._filtered = False
+
+    async def load_policy(self, model: Model):
+        """Loads all policy rules from storage."""
+        for line in await CasbinRule.all():
+            load_policy_line(str(line), model)
+
+    async def load_filtered_policy(self, model: Model, filter: RuleFilter) -> None:
+        """Loads all policy rules that match the filter from storage."""
+        rules = await CasbinRule.filter(
+            **{f"{f}__in": v for f, v in asdict(filter).items() if v}
+        ).all()
+
+        for line in rules:
+            load_policy_line(str(line), model)
+
+        self._filtered = True
+
+    async def save_policy(self, model: Model):
+        """Saves all policy rules to storage."""
+        rules = [
+            self._to_rule(ptype, rule)
+            for sec in ["p", "g"]
+            for ptype, ast in model.model.get(sec, {}).items()
+            for rule in ast.policy
+        ]
+        await CasbinRule.all().delete()
+        await CasbinRule.bulk_create(rules)
+
+    async def add_policy(self, sec: str, ptype: str, rule: Rule):
+        """Saves a policy rule to storage."""
+        await self._to_rule(ptype, rule).save()
+
+    async def add_policies(self, sec: str, ptype: str, rules: List[Rule]):
+        """Saves policy rules to storage."""
+        batch = [self._to_rule(ptype, rule) for rule in rules]
+        await CasbinRule.bulk_create(batch)
+
+    async def remove_policy(self, sec: str, ptype: str, rule: Rule):
+        """Removes a policy rule from storage."""
+        vs = {f"v{i}": rule[i] if len(rule) > i else "" for i in range(6)}
+        r = await CasbinRule.filter(ptype=ptype, **vs).delete()
+        return r > 0
+
+    async def remove_policies(self, sec, ptype, rules: List[Rule]):
+        """Removes policy rules from storage."""
+        if not rules:
+            return
+
+        qs = [
+            Q(**{f"v{i}": rule[i] if len(rule) > i else "" for i in range(6)})
+            for i, rule in enumerate(rules)
+        ]
+        await CasbinRule.filter(Q(*qs, join_type=Q.OR), ptype=ptype).delete()
+
+    async def remove_filtered_policy(
+        self, sec: str, ptype: str, field_index: int, *field_values: Tuple[str]
+    ):
+        """Removes policy rules that match the filter from the storage. This is part
+        of the Auto-Save feature.
+        """
+        if not (0 <= field_index <= 5) or not (
+            1 <= field_index + len(field_values) <= 6
+        ):
+            return False
+
+        r = 0
+        vs = {f"v{field_index + i}": v for i, v in enumerate(field_values) if v}
+        if vs:
+            r = await CasbinRule.filter(**vs).delete()
+
+        return r > 0
+
+    def is_filtered(self):
+        return self._filtered
+
+    def _to_rule(self, ptype: str, rule: Rule) -> CasbinRule:
+        kwargs = {f"v{i}": v for i, v in enumerate(rule)}
+        return CasbinRule(ptype=ptype, **kwargs)
