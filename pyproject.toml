@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "casbin-tortoise-adapter"
-version = "1.0.0"
+version = "1.0.0.post1"
 description = "Tortoise ORM adapter for AsyncCasbin"
 authors = ["Elias Gabriel <me@eliasfgabriel.com>"]
 license = "Apache-2.0"
