@@ -1,4 +1,4 @@
-# Tortiose ORM Adapter for AsyncCasbin
+# Tortoise ORM Adapter for AsyncCasbin
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/thearchitector/casbin-tortoise-adapter/CI?label=testing&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/thearchitector/casbin-tortoise-adapter?style=flat-square)

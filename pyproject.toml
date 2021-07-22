@@ -6,7 +6,7 @@ authors = ["Elias Gabriel <me@eliasfgabriel.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/thearchitector/casbin-tortoise-adapter"
-documentation = "https://github.com/thearchitector/casbin-tortoise-adapter#tortiose-orm-adapter-for-asynccasbin"
+documentation = "https://github.com/thearchitector/casbin-tortoise-adapter#tortoise-orm-adapter-for-asynccasbin"
 keywords = ["casbin", "asyncio", "access control", "Tortoise ORM", "authorization"]
 
 [tool.poetry.dependencies]
