@@ -60,7 +60,7 @@ class TortoiseAdapter(Adapter):
 
     async def remove_policy(self, sec: str, ptype: str, rule: RuleType):
         """Removes a policy rule from storage."""
-        vs = {f"v{i}": rule[i] if len(rule) > i else "" for i in range(6)}
+        vs = {f"v{i}": rule[i] if len(rule) > i else None for i in range(6)}
         r = await self.modelclass.filter(ptype=ptype, **vs).delete()
         return r > 0
 
@@ -70,7 +70,7 @@ class TortoiseAdapter(Adapter):
             return
 
         qs = [
-            Q(**{f"v{i}": rule[i] if len(rule) > i else "" for i in range(6)})
+            Q(**{f"v{i}": rule[i] if len(rule) > i else None for i in range(6)})
             for i, rule in enumerate(rules)
         ]
         await self.modelclass.filter(Q(*qs, join_type=Q.OR), ptype=ptype).delete()
