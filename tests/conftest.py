@@ -32,7 +32,7 @@ async def adapter():
     try:
         yield TortoiseAdapter()
     finally:
-        await CasbinRule.all().delete()
+        await Tortoise._drop_databases()
         await Tortoise.close_connections()
 
 
