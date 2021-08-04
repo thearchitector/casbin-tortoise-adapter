@@ -24,7 +24,7 @@ async def adapter():
             },
             "apps": {"my_app": {"models": ["casbin_tortoise_adapter"]}},
         },
-        _create_db=True,
+        # _create_db=True,
     )
     await Tortoise.generate_schemas()
 
