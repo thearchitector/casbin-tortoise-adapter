@@ -1,7 +1,9 @@
 # Tortoise ORM Adapter for AsyncCasbin
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/thearchitector/casbin-tortoise-adapter/CI?label=testing&style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/thearchitector/casbin-tortoise-adapter/CI?label=tests&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/thearchitector/casbin-tortoise-adapter?style=flat-square)
+[![Buy a tree](https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://plant.treeware.earth/thearchitector/casbin-tortoise-adapter)
+![Trees via Treeware](https://img.shields.io/treeware/trees/thearchitector/casbin-tortoise-adapter?style=flat-square)
 
 This is an asynchronous adapter for [AsyncCasbin](https://pypi.org/project/asynccasbin) using Tortoise ORM.
 
@@ -60,3 +62,5 @@ async def main()
 ### License
 
 This project, like other adapters, is licensed under the [Apache 2.0 License](LICENSE).
+
+This package is [Treeware](https://treeware.earth). If you use it in production, then we ask that you [**buy the world a tree**](https://plant.treeware.earth/thearchitector/casbin-tortoise-adapter) to thank us for our work. By contributing to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
