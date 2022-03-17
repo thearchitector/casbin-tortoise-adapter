@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 from casbin.model import Model
 from casbin.persist import Adapter, load_policy_line
-from tortoise.query_utils import Q
+from tortoise.expressions import Q
 
 from .filter import RuleFilter
 from .model import CasbinRule
