@@ -16,7 +16,7 @@ asynccasbin = "^1.1.2"
 tortoise-orm = ">=0.18.0"
 
 # linting deps (dev only)
-black = {version = "^21.7b0", optional = true}
+black = {version = "^22.3.0", optional = true}
 flake8 = {version = "^3.9.2", optional = true}
 isort = {version = "^5.9.2", optional = true}
 mypy = {version = "^0.910", optional = true}
