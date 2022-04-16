@@ -10,24 +10,25 @@ This is an asynchronous adapter for [AsyncCasbin](https://pypi.org/project/async
 
 ```sh
 pip install casbin-tortoise-adapter
-# or via your favorite dependency manager
+# or via your favorite dependency manager, like Poetry
 ```
 
 The current supported databases are [limited by Tortoise ORM](https://tortoise.github.io/databases.html), and include:
 
-- SQLite
-- PostgreSQL >= 9.4 (using asyncpg)
-- MySQL/MariaDB (using aiomysql)
+- PostgreSQL >= 9.4 (using `asyncpg`)
+- SQLite (using `aiosqlite`)
+- MySQL/MariaDB (using `asyncmy`)
+- Microsoft SQL Server / Oracle (using `asyncodbc`)
 
 ## Documentation
 
-The only possible configurable is the underlying Model used by `TortoiseAdapter`. While simple, it should be plenty to cover most use cases that one could come across. You can change the model by passing the `modelclass: CasbinRule` keyword argument to the adapter and updating the model in your Tortoise ORM init configuration.
+The only configurable is the underlying Model used by `TortoiseAdapter`. While simple, it should be plenty to cover most use cases that one could come across. You can change the model by passing the `modelclass: CasbinRule` keyword argument to the adapter and updating the model in your Tortoise ORM init configuration.
 
 The `modelclass` value must inherit from `casbin_tortoise_adapter.CasbinRule` to ensure that all the expected fields are present. A `TypeError` will throw if this is not the case.
 
 A custom Model, combined with advanced configuration like show in the Tortoise ORM ["Two Databases" example](https://tortoise.github.io/examples/basic.html#two-databases), allow you to change where your authorization rules are stored (database, model name, etc.)
 
-## Base Example
+## Basic example
 
 ```python
 from casbin import Enforcer
