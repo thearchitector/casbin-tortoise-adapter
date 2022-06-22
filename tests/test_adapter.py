@@ -103,18 +103,6 @@ async def test_remove_filtered_policy(mock_data, enforcer):
     assert not enforcer.enforce("bob", "data2", "write")
     assert not enforcer.enforce("alice", "data2", "write")
 
-    # await enforcer.add_permission_for_user("alice", "data6", "delete")
-    # await enforcer.add_permission_for_user("bob", "data6", "delete")
-    # await enforcer.add_permission_for_user("eve", "data6", "delete")
-    # assert enforcer.enforce("alice", "data6", "delete")
-    # assert enforcer.enforce("bob", "data6", "delete")
-    # assert enforcer.enforce("eve", "data6", "delete")
-    # await enforcer.remove_filtered_policy(0, "alice", None, "delete")
-    # assert not enforcer.enforce("alice", "data6", "delete")
-    # await enforcer.remove_filtered_policy(0, None, None, "delete")
-    # assert not enforcer.enforce("bob", "data6", "delete")
-    # assert not enforcer.enforce("eve", "data6", "delete")
-
 
 def test_str(enforcer):
     rule = CasbinRule(ptype="p", v0="alice", v1="data1", v2="read")
@@ -256,3 +244,68 @@ async def test_filtered_policy(mock_data, enforcer):
     assert enforcer.enforce("bob", "data2", "write")
     assert not enforcer.enforce("data2_admin", "data2", "read")
     assert enforcer.enforce("data2_admin", "data2", "write")
+
+
+@pytest.mark.asyncio
+async def test_update_policy(mock_data, enforcer):
+    await enforcer.load_policy()
+
+    assert enforcer.enforce("alice", "data1", "read")
+    await enforcer.update_policy(
+        ["alice", "data1", "read"], ["alice", "data1", "no_read"]
+    )
+    assert not enforcer.enforce("alice", "data1", "read")
+
+    assert not enforcer.enforce("bob", "data1", "read")
+    await enforcer.add_policy(["mike", "cookie", "eat"])
+    await enforcer.update_policy(["mike", "cookie", "eat"], ["bob", "data1", "read"])
+    assert enforcer.enforce("bob", "data1", "read")
+
+    assert not enforcer.enforce("bob", "data1", "write")
+    await enforcer.update_policy(["bob", "data1", "read"], ["bob", "data1", "write"])
+    assert enforcer.enforce("bob", "data1", "write")
+
+    assert enforcer.enforce("bob", "data2", "write")
+    await enforcer.update_policy(["bob", "data2", "write"], ["bob", "data2", "read"])
+    assert not enforcer.enforce("bob", "data2", "write")
+
+    assert enforcer.enforce("bob", "data2", "read")
+    await enforcer.update_policy(["bob", "data2", "read"], ["carl", "data2", "write"])
+    assert not enforcer.enforce("bob", "data2", "write")
+
+    assert enforcer.enforce("carl", "data2", "write")
+    await enforcer.update_policy(
+        ["carl", "data2", "write"], ["carl", "data2", "no_write"]
+    )
+    assert not enforcer.enforce("bob", "data2", "write")
+
+
+@pytest.mark.asyncio
+async def test_update_policies(mock_data, enforcer):
+    old_rule_0 = ["alice", "data1", "read"]
+    old_rule_1 = ["bob", "data2", "write"]
+    old_rule_2 = ["data2_admin", "data2", "read"]
+    old_rule_3 = ["data2_admin", "data2", "write"]
+
+    new_rule_0 = ["alice", "data_test", "read"]
+    new_rule_1 = ["bob", "data_test", "write"]
+    new_rule_2 = ["data2_admin", "data_test", "read"]
+    new_rule_3 = ["data2_admin", "data_test", "write"]
+
+    old_rules = [old_rule_0, old_rule_1, old_rule_2, old_rule_3]
+    new_rules = [new_rule_0, new_rule_1, new_rule_2, new_rule_3]
+
+    await enforcer.load_policy()
+    await enforcer.update_policies(old_rules, new_rules)
+
+    assert not enforcer.enforce("alice", "data1", "read")
+    assert enforcer.enforce("alice", "data_test", "read")
+
+    assert not enforcer.enforce("bob", "data2", "write")
+    assert enforcer.enforce("bob", "data_test", "write")
+
+    assert not enforcer.enforce("data2_admin", "data2", "read")
+    assert enforcer.enforce("data2_admin", "data_test", "read")
+
+    assert not enforcer.enforce("data2_admin", "data2", "write")
+    assert enforcer.enforce("data2_admin", "data_test", "write")

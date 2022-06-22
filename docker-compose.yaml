@@ -6,11 +6,12 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: casbin_rule
-    restart: always
 
   test:
-    build: .
-    container_name: adapter-testing
+    build:
+      context: .
+      args:
+        PYTHON_VERSION: "3.7"
     volumes:
       - .:/casbin-tortoise
     depends_on:

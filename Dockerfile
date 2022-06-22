@@ -1,20 +1,21 @@
-FROM python:3.7-slim-buster
+# syntax=docker/dockerfile:1.2
 
-ENV POETRY_HOME=/etc/poetry PATH="${PATH}:/etc/poetry/bin"
+ARG PYTHON_VERSION
+FROM python:${PYTHON_VERSION}-slim
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+WORKDIR /casbin-tortoise
+ENV PATH="/root/.local/bin:/casbin-tortoise/.venv/bin:${PATH}"
+
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y neovim curl && \
-    apt-get autoremove --purge && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install --no-install-recommends -y curl build-essential && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
+    poetry config virtualenvs.create false
+
+COPY poetry.lock pyproject.toml /casbin-tortoise/
+RUN poetry install
 
 COPY . /casbin-tortoise
-WORKDIR /casbin-tortoise
 
-# python dependencies (Poetry)
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 - && \
-    source /etc/poetry/env && \
-    poetry config virtualenvs.create false && \
-    poetry install
-
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+CMD [ "sleep", "infinity" ]

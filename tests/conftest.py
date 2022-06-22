@@ -36,12 +36,12 @@ async def adapter():
         await Tortoise.close_connections()
 
 
-@pytest.fixture()
+@pytest.fixture
 async def enforcer(adapter):
-    yield Enforcer("tests/data/rbac_model.conf", adapter)
+    yield Enforcer("tests/rbac_model.conf", adapter)
 
 
-@pytest.fixture()
+@pytest.fixture
 async def mock_data():
     await CasbinRule.all().delete()
     await CasbinRule.bulk_create(
