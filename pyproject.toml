@@ -20,6 +20,10 @@ pytest = "^6.2.4"
 pytest-asyncio = "^0.15.1"
 asyncpg = "^0.23.0"
 
+[tool.pytest.ini_options]
+addopts = "-ra -svv"
+testpaths = [ "tests" ]
+
 [tool.mypy]
 ignore_missing_imports = true
 warn_return_any = true

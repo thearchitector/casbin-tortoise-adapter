@@ -4,7 +4,8 @@ ARG PYTHON_VERSION
 FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /casbin-tortoise
-ENV PATH="/root/.local/bin:/casbin-tortoise/.venv/bin:${PATH}"
+ENV PATH="/root/.local/bin:/casbin-tortoise/.venv/bin:${PATH}" \
+    PYTHONPATH="/casbin-tortoise"
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl build-essential && \

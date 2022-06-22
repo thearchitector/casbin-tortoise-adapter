@@ -27,4 +27,4 @@ jobs:
       - name: Adjust container
         run: sed -i 's/3.7/${{ matrix.python-version }}/' docker-compose.yaml
       - name: Run tests
-        run: docker-compose run --rm test pytest -svv
+        run: docker-compose run --rm test pytest
