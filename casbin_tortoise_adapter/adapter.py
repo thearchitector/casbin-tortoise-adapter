@@ -1,8 +1,14 @@
 from dataclasses import asdict
 from typing import List, Tuple
-
+import asyncio
 from casbin.model import Model
-from casbin.persist import Adapter, load_policy_line
+from casbin.persist import (
+    BatchAdapter,
+    FilteredAdapter,
+    Adapter,
+    load_policy_line,
+)
+from casbin.persist.adapters.update_adapter import UpdateAdapter
 from tortoise.expressions import Q
 
 from .filter import RuleFilter
@@ -10,7 +16,7 @@ from .model import CasbinRule
 from .typing import RuleType
 
 
-class TortoiseAdapter(Adapter):
+class TortoiseAdapter(BatchAdapter, UpdateAdapter, FilteredAdapter, Adapter):
     """An async Casbin adapter for Tortoise ORM."""
 
     def __init__(self, modelclass=CasbinRule):
@@ -58,27 +64,47 @@ class TortoiseAdapter(Adapter):
         batch = [self._to_rule(ptype, rule) for rule in rules]
         await self.modelclass.bulk_create(batch)
 
+    async def update_policy(
+        self, sec: str, ptype: str, old_rule: RuleType, new_policy: RuleType
+    ):
+        """
+        Updates a policy rule from storage. This is part of the Auto-Save feature.
+        """
+        vs = {f"v{i}": rule for i, rule in enumerate(old_rule)}
+        r = self.modelclass.filter(ptype=ptype, **vs)
+        await r.update(
+            **{
+                f"v{i}": (new_policy[i] if i < len(new_policy) else None)
+                for i in range(6)
+            }
+        )
+
+    async def update_policies(
+        self,
+        sec: str,
+        ptype: str,
+        old_rules: List[RuleType],
+        new_rules: List[RuleType],
+    ):
+        """Updates the old rules with the new rules."""
+        await asyncio.gather(
+            *[
+                self.update_policy(sec, ptype, old_rule, new_rule)
+                for old_rule, new_rule in zip(old_rules, new_rules)
+            ]
+        )
+
     async def remove_policy(self, sec: str, ptype: str, rule: RuleType):
         """Removes a policy rule from storage."""
-        vs = {f"v{i}": rule[i] for i in range(6) if len(rule) > i}
+        vs = {f"v{i}": v for i, v in enumerate(rule)}
         r = await self.modelclass.filter(ptype=ptype, **vs).delete()
         return r > 0
-
-    async def remove_policies(self, sec, ptype, rules: List[RuleType]):
-        """Removes policy rules from storage."""
-        if not rules:
-            return
-
-        qs = [
-            Q(**{f"v{i}": rule[i] for i in range(6) if len(rule) > i})
-            for i, rule in enumerate(rules)
-        ]
-        await self.modelclass.filter(Q(*qs, join_type=Q.OR), ptype=ptype).delete()
 
     async def remove_filtered_policy(
         self, sec: str, ptype: str, field_index: int, *field_values: Tuple[str]
     ):
-        """Removes policy rules that match the filter from the storage. This is part
+        """
+        Removes policy rules that match the filter from the storage. This is part
         of the Auto-Save feature.
         """
         if not (0 <= field_index <= 5) or not (
@@ -93,7 +119,16 @@ class TortoiseAdapter(Adapter):
 
         return r > 0
 
+    async def remove_policies(self, sec, ptype, rules: List[RuleType]):
+        """Removes policy rules from storage."""
+        if not rules:
+            return
+
+        qs = [Q(**{f"v{i}": v for i, v in enumerate(rule)}) for rule in rules]
+        await self.modelclass.filter(Q(*qs, join_type=Q.OR), ptype=ptype).delete()
+
     def is_filtered(self):
+        """Returns if the loaded policy is filtered or not."""
         return self._filtered
 
     def _to_rule(self, ptype: str, rule: RuleType):

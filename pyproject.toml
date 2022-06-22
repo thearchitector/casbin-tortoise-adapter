@@ -13,31 +13,12 @@ include = ["CHANGELOG.md", "casbin_tortoise_adapter/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.7"
 asynccasbin = "^1.1.2"
-tortoise-orm = ">=0.18.0"
-
-# linting deps (dev only)
-black = {version = "^22.3.0", optional = true}
-flake8 = {version = "^3.9.2", optional = true}
-isort = {version = "^5.9.2", optional = true}
-mypy = {version = "^0.910", optional = true}
+tortoise-orm = {extras = ["accel"], version = "^0.19.1"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
 pytest-asyncio = "^0.15.1"
 asyncpg = "^0.23.0"
-
-[tool.poetry.extras]
-linting = ["black", "flake8", "isort", "mypy"]
-
-[tool.isort]
-profile = "black"
-
-[tool.mypy]
-ignore_missing_imports = true
-warn_return_any = true
-show_column_numbers = true
-follow_imports = "silent"
-warn_unreachable = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
