@@ -1,6 +1,7 @@
 # Tortoise ORM Adapter for AsyncCasbin
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/thearchitector/casbin-tortoise-adapter/CI?label=tests&style=flat-square)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/casbin-tortoise-adapter?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/thearchitector/casbin-tortoise-adapter?style=flat-square)
 [![Buy a tree](https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://ecologi.com/eliasgabriel?r=6128126916bfab8bd051026c)
 
@@ -9,7 +10,7 @@ This is an asynchronous adapter for [AsyncCasbin](https://pypi.org/project/async
 ## Installation
 
 ```sh
-pip install casbin-tortoise-adapter
+python3 -m pip install --user casbin-tortoise-adapter
 # or via your favorite dependency manager, like Poetry
 ```
 

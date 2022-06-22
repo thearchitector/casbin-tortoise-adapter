@@ -5,41 +5,26 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    env:
-      POETRY_CACHE_DIR: ~/.cache/poetry
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.7"
-      - uses: abatilo/actions-poetry@v2.1.2
-      - uses: actions/cache@v2
-        id: cache
-        with:
-          path: |
-            ${{ env.POETRY_CACHE_DIR }}
-            .venv
-          key: linting-poetry-${{ hashFiles('poetry.lock') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: poetry install -n --no-root --no-dev -E linting
-      - name: Check formatting
-        run: poetry run black --check --diff .
+      - run: python3 -m pip install mypy
       - name: Check typing
-        run: poetry run mypy --pretty .
+        run: mypy --pretty .
+      - name: Check formatting
+        uses: psf/black@stable
 
   test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-    name: testing
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     steps:
-      - uses: actions/checkout@v2
-      - name: Build containers
-        run: docker-compose up -d
-      - name: Wait for services
-        run: sleep 15s
-      - name: Run test suite
-        run: docker exec adapter-testing pytest -svv
+      - uses: actions/checkout@v3
+      - name: Adjust container
+        run: sed -i 's/3.7/${{ matrix.python-version }}/' docker-compose.yaml
+      - name: Run tests
+        run: docker-compose run --rm test pytest -svv
