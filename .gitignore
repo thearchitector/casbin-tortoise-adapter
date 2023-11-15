@@ -11,3 +11,9 @@ __pycache__
 
 # builds
 dist
+
+# ide
+.idea
+
+# pyenv
+.python-version
