@@ -11,9 +11,9 @@ keywords = ["casbin", "asyncio", "access control", "Tortoise ORM", "authorizatio
 include = ["CHANGELOG.md", "casbin_tortoise_adapter/py.typed"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 asynccasbin = "^1.1.2"
-tortoise-orm = {extras = ["accel"], version = "^0.19.1"}
+tortoise-orm = { extras = ["accel"], version = "^0.20" }
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
@@ -22,7 +22,7 @@ asyncpg = "^0.23.0"
 
 [tool.pytest.ini_options]
 addopts = "-ra -svv"
-testpaths = [ "tests" ]
+testpaths = ["tests"]
 
 [tool.mypy]
 ignore_missing_imports = true
