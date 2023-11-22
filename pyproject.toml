@@ -11,9 +11,12 @@ keywords = ["casbin", "asyncio", "access control", "Tortoise ORM", "authorizatio
 include = ["CHANGELOG.md", "casbin_tortoise_adapter/py.typed"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 asynccasbin = "^1.1.2"
-tortoise-orm = { extras = ["accel"], version = "^0.20" }
+tortoise-orm = [
+    { extras = ["accel"], version = "^0.19.1", python = ">=3.7,<3.8" },
+    { extras = ["accel"], version = "^0.20", python = ">=3.8" }
+]
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
