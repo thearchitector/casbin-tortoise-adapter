@@ -14,7 +14,9 @@ jobs:
       - name: Check typing
         run: mypy --pretty .
       - name: Check formatting
-        uses: psf/black@stable
+        uses: chartboost/ruff-action@v1
+        with:
+          args: check --target-version=py37
 
   test:
     runs-on: ubuntu-latest
