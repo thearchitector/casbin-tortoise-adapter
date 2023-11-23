@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.1] - 2023-11-23
+
+# Added
+
+- Support for Python 3.11.
+
+### Fixed
+
+- Support for Python 3.7. (credit @hubertshelley with [PR.#6](https://github.com/thearchitector/casbin-tortoise-adapter/pull/6))
+
 ## [1.2.0] - 2022-06-22
 
 ### Added
