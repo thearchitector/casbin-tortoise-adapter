@@ -1,11 +1,12 @@
+import asyncio
 from dataclasses import asdict
 from typing import List, Tuple
-import asyncio
+
 from casbin.model import Model
 from casbin.persist import (
+    Adapter,
     BatchAdapter,
     FilteredAdapter,
-    Adapter,
     load_policy_line,
 )
 from casbin.persist.adapters.update_adapter import UpdateAdapter
