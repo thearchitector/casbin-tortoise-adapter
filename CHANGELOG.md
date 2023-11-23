@@ -2,7 +2,7 @@
 
 ## [1.2.1] - 2023-11-23
 
-# Added
+### Added
 
 - Support for Python 3.11.
 
