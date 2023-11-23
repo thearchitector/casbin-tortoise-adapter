@@ -11,7 +11,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y curl build-essential && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    curl -sSL https://install.python-poetry.org | python3 - && \
+    curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.5.1 python3 - && \
     poetry config virtualenvs.create false
 
 COPY poetry.lock pyproject.toml /casbin-tortoise/
