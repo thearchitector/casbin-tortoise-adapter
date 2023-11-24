@@ -1,10 +1,7 @@
-version: "3"
-
 services:
-  test-db:
-    image: postgres:12-alpine
+  postgres:
+    image: postgres:alpine
     environment:
-      POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
       POSTGRES_DB: "casbin_rule"
     healthcheck:
@@ -18,5 +15,5 @@ services:
     volumes:
       - .:/casbin-tortoise
     depends_on:
-      test-db:
+      postgres:
         condition: service_healthy

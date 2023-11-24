@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2] - 2023-11-24
+
+### Fixed
+
+- Improved and corrected static typing.
+
 ## [1.2.1] - 2023-11-23
 
 ### Added

@@ -20,7 +20,7 @@ async def adapter():
     await Tortoise.init(
         {
             "connections": {
-                "default": "postgres://postgres:password@test-db:5432/casbin"
+                "default": "postgres://postgres:password@postgres:5432/casbin"
             },
             "apps": {"my_app": {"models": ["casbin_tortoise_adapter"]}},
         },
