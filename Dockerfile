@@ -1,22 +1,17 @@
-# syntax=docker/dockerfile:1.2
+# syntax=docker/dockerfile:1
 
-ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim
+FROM python:3.11
+
+RUN pip install -U pip setuptools wheel && \
+    pip install pdm
 
 WORKDIR /casbin-tortoise
-ENV PATH="/root/.local/bin:/casbin-tortoise/.venv/bin:${PATH}" \
-    PYTHONPATH="/casbin-tortoise"
+COPY pyproject.toml pdm.lock /casbin-tortoise
+RUN pdm export -G :all -o requirements.txt --without-hashes && \
+    pip install -r requirements.txt
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y curl build-essential && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.5.1 python3 - && \
-    poetry config virtualenvs.create false
+COPY . ./casbin-tortoise
 
-COPY poetry.lock pyproject.toml /casbin-tortoise/
-RUN poetry install
-
-COPY . /casbin-tortoise
+ENV PYTHONPATH=/casbin-tortoise
 
 CMD [ "sleep", "infinity" ]

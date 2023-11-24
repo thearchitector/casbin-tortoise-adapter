@@ -2,12 +2,14 @@
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+.pdm-python
+.venv
 
 # caches
-.venv
 .pytest_cache
 .mypy_cache
 __pycache__
+.pdm-build
 
 # builds
 dist

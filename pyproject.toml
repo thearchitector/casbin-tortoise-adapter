@@ -1,39 +1,53 @@
-[tool.poetry]
+[project]
 name = "casbin-tortoise-adapter"
-version = "1.2.1"
+version = "1.2.2"
 description = "Tortoise ORM adapter for AsyncCasbin"
-authors = ["Elias Gabriel <me@eliasfgabriel.com>"]
-license = "Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/thearchitector/casbin-tortoise-adapter"
-documentation = "https://github.com/thearchitector/casbin-tortoise-adapter#tortoise-orm-adapter-for-asynccasbin"
-keywords = ["casbin", "asyncio", "access control", "Tortoise ORM", "authorization"]
-include = ["CHANGELOG.md", "casbin_tortoise_adapter/py.typed"]
-
-[tool.poetry.dependencies]
-python = "^3.7"
-asynccasbin = "^1.1.2"
-tortoise-orm = [
-    { extras = ["accel"], version = "^0.19.1", python = ">=3.7,<3.8" },
-    { extras = ["accel"], version = "^0.20", python = ">=3.8" }
+keywords = [
+    "casbin",
+    "asyncio",
+    "access control",
+    "Tortoise ORM",
+    "authorization",
+    "pycasbin"
+]
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Elias Gabriel", email = "me@eliasfgabriel.com"},
 ]
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
-pytest-asyncio = "^0.15.1"
-asyncpg = "^0.28.0"
+requires-python = ">=3.7,<4.0"
+dependencies = [
+    "asynccasbin<2.0.0,>=1.1.2",
+    "tortoise-orm[accel]>=0.19.1; python_version < \"3.8\"",
+    "tortoise-orm[accel]>=0.20; python_version >= \"3.8\"",
+]
+
+[project.urls]
+repository = "https://github.com/thearchitector/casbin-tortoise-adapter"
+documentation = "https://github.com/thearchitector/casbin-tortoise-adapter#tortoise-orm-adapter-for-asynccasbin"
+changelog = "https://github.com/thearchitector/casbin-tortoise-adapter/blob/main/CHANGELOG.md"
+
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest<8.0,>=7.1",
+    "pytest-asyncio>=0.15.1",
+    "asyncpg>=0.28.0",
+]
 
 [tool.pytest.ini_options]
 addopts = "-ra -svv"
 testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.pyright]
+reportMissingTypeStubs = "none"
+ignore = [ "tests" ]
 
 [tool.mypy]
-ignore_missing_imports = true
-warn_return_any = true
-show_column_numbers = true
-follow_imports = "silent"
-warn_unreachable = true
+strict = true
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"

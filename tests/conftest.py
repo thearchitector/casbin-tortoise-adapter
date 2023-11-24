@@ -37,7 +37,7 @@ async def adapter():
 
 
 @pytest.fixture
-async def enforcer(adapter):
+def enforcer(adapter):
     yield Enforcer("tests/rbac_model.conf", adapter)
 
 

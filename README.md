@@ -1,17 +1,17 @@
-# Tortoise ORM Adapter for AsyncCasbin
+# Tortoise ORM Adapter for PyCasbin
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/thearchitector/casbin-tortoise-adapter/ci.yaml?label=tests&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/casbin-tortoise-adapter?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/thearchitector/casbin-tortoise-adapter?style=flat-square)
 [![Buy a tree](https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://ecologi.com/eliasgabriel?r=6128126916bfab8bd051026c)
 
-This is an asynchronous adapter for [AsyncCasbin](https://pypi.org/project/asynccasbin) using Tortoise ORM.
+This is an asynchronous adapter for [pycasbin](https://pypi.org/project/casbin) using Tortoise ORM.
 
 ## Installation
 
 ```sh
 python3 -m pip install --user casbin-tortoise-adapter
-# or via your favorite dependency manager, like Poetry
+# or via your favorite dependency manager, like PDM
 ```
 
 The current supported databases are [limited by Tortoise ORM](https://tortoise.github.io/databases.html), and include:
