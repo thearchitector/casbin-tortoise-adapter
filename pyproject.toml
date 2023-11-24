@@ -46,7 +46,13 @@ reportMissingTypeStubs = "none"
 ignore = [ "tests" ]
 
 [tool.mypy]
+python_version = "3.7"
 strict = true
+disallow_subclassing_any = false
+
+[[tool.mypy.overrides]]
+module = "casbin.*"
+ignore_missing_imports = true
 
 [build-system]
 requires = ["pdm-backend"]

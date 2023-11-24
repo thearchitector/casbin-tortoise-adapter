@@ -1,73 +1,90 @@
+from __future__ import annotations
+
 import asyncio
 from dataclasses import asdict
-from typing import List, Tuple
+from typing import TYPE_CHECKING
 
-from casbin.model import Model
 from casbin.persist import (
     Adapter,
     BatchAdapter,
     FilteredAdapter,
-    load_policy_line,
+    load_policy_line,  # pyright: ignore
 )
 from casbin.persist.adapters.update_adapter import UpdateAdapter
 from tortoise.expressions import Q
 
-from .filter import RuleFilter
 from .model import CasbinRule
-from .typing import RuleType
+
+if TYPE_CHECKING:
+    from typing import Dict, List, Tuple, Type
+
+    from casbin.model import Model
+
+    from .filter import RuleFilter
+    from .typing import RuleType
+
+    class Assertion:
+        policy: List[RuleType]
 
 
 class TortoiseAdapter(BatchAdapter, UpdateAdapter, FilteredAdapter, Adapter):
     """An async Casbin adapter for Tortoise ORM."""
 
-    def __init__(self, modelclass=CasbinRule):
-        if not issubclass(modelclass, CasbinRule):
+    def __init__(self, modelclass: Type[CasbinRule] = CasbinRule) -> None:
+        if not issubclass(modelclass, CasbinRule):  # pyright: ignore
             raise TypeError(
                 "The provided model class must be a subclass of CasbinRule!"
             )
 
-        self.modelclass = modelclass
-        self._filtered = False
+        self.modelclass: Type[CasbinRule] = modelclass
+        self._filtered: bool = False
 
-    async def load_policy(self, model: Model):
+    async def load_policy(self, model: Model) -> None:
         """Loads all policy rules from storage."""
         for line in await self.modelclass.all():
             load_policy_line(str(line), model)
 
-    async def load_filtered_policy(self, model: Model, filter: RuleFilter):
+    async def load_filtered_policy(  # pyright: ignore
+        self, model: Model, filter: RuleFilter
+    ) -> None:
         """Loads all policy rules that match the filter from storage."""
         rules = await self.modelclass.filter(
             **{f"{f}__in": v for f, v in asdict(filter).items() if v}
-        ).all()
+        )
 
         for line in rules:
             load_policy_line(str(line), model)
 
         self._filtered = True
 
-    async def save_policy(self, model: Model):
+    async def save_policy(self, model: Model) -> None:  # pyright: ignore
         """Saves all policy rules to storage."""
-        rules = [
+        raw: Dict[str, Dict[str, Assertion]] = model.model  # pyright: ignore
+        rules: List[CasbinRule] = [
             self._to_rule(ptype, rule)
-            for sec in ["p", "g"]
-            for ptype, ast in model.model.get(sec, {}).items()
+            for sec in ("p", "g")
+            for ptype, ast in raw.get(sec, {}).items()
             for rule in ast.policy
         ]
         await self.modelclass.all().delete()
         await self.modelclass.bulk_create(rules)
 
-    async def add_policy(self, sec: str, ptype: str, rule: RuleType):
+    async def add_policy(  # pyright: ignore
+        self, sec: str, ptype: str, rule: RuleType
+    ) -> None:
         """Saves a policy rule to storage."""
         await self._to_rule(ptype, rule).save()
 
-    async def add_policies(self, sec: str, ptype: str, rules: List[RuleType]):
+    async def add_policies(  # pyright: ignore
+        self, sec: str, ptype: str, rules: List[RuleType]
+    ) -> None:
         """Saves policy rules to storage."""
         batch = [self._to_rule(ptype, rule) for rule in rules]
         await self.modelclass.bulk_create(batch)
 
-    async def update_policy(
+    async def update_policy(  # pyright: ignore
         self, sec: str, ptype: str, old_rule: RuleType, new_policy: RuleType
-    ):
+    ) -> None:
         """
         Updates a policy rule from storage. This is part of the Auto-Save feature.
         """
@@ -86,7 +103,7 @@ class TortoiseAdapter(BatchAdapter, UpdateAdapter, FilteredAdapter, Adapter):
         ptype: str,
         old_rules: List[RuleType],
         new_rules: List[RuleType],
-    ):
+    ) -> None:
         """Updates the old rules with the new rules."""
         await asyncio.gather(
             *[
@@ -95,15 +112,17 @@ class TortoiseAdapter(BatchAdapter, UpdateAdapter, FilteredAdapter, Adapter):
             ]
         )
 
-    async def remove_policy(self, sec: str, ptype: str, rule: RuleType):
+    async def remove_policy(  # pyright: ignore
+        self, sec: str, ptype: str, rule: RuleType
+    ) -> bool:
         """Removes a policy rule from storage."""
         vs = {f"v{i}": v for i, v in enumerate(rule)}
         r = await self.modelclass.filter(ptype=ptype, **vs).delete()
         return r > 0
 
-    async def remove_filtered_policy(
+    async def remove_filtered_policy(  # pyright: ignore
         self, sec: str, ptype: str, field_index: int, *field_values: Tuple[str]
-    ):
+    ) -> bool:
         """
         Removes policy rules that match the filter from the storage. This is part
         of the Auto-Save feature.
@@ -120,7 +139,9 @@ class TortoiseAdapter(BatchAdapter, UpdateAdapter, FilteredAdapter, Adapter):
 
         return r > 0
 
-    async def remove_policies(self, sec, ptype, rules: List[RuleType]):
+    async def remove_policies(  # pyright: ignore
+        self, sec: str, ptype: str, rules: List[RuleType]
+    ) -> None:
         """Removes policy rules from storage."""
         if not rules:
             return
@@ -128,10 +149,10 @@ class TortoiseAdapter(BatchAdapter, UpdateAdapter, FilteredAdapter, Adapter):
         qs = [Q(**{f"v{i}": v for i, v in enumerate(rule)}) for rule in rules]
         await self.modelclass.filter(Q(*qs, join_type=Q.OR), ptype=ptype).delete()
 
-    def is_filtered(self):
+    def is_filtered(self) -> bool:
         """Returns if the loaded policy is filtered or not."""
         return self._filtered
 
-    def _to_rule(self, ptype: str, rule: RuleType):
-        kwargs = {f"v{i}": v for i, v in enumerate(rule)}
+    def _to_rule(self, ptype: str, rule: RuleType) -> CasbinRule:
+        kwargs: Dict[str, str] = {f"v{i}": v for i, v in enumerate(rule)}
         return self.modelclass(ptype=ptype, **kwargs)

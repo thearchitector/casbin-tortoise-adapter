@@ -1,0 +1,25 @@
+repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.1.6
+    hooks:
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.1
+    hooks:
+      - id: mypy
+        exclude: ^tests
+        require_serial: true
+        args: ["--explicit-package-bases", "--check-untyped-defs"]
+        additional_dependencies:
+          [
+            "asynccasbin<2.0.0,>=1.1.2",
+            'tortoise-orm[accel]>=0.19.1; python_version < "3.8"',
+            'tortoise-orm[accel]>=0.20; python_version >= "3.8"',
+          ]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-toml
+      - id: check-yaml
