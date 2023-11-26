@@ -19,8 +19,7 @@ authors = [
 requires-python = ">=3.7,<4.0"
 dependencies = [
     "asynccasbin<2.0.0,>=1.1.2",
-    "tortoise-orm[accel]>=0.19.1; python_version < \"3.8\"",
-    "tortoise-orm[accel]>=0.20; python_version >= \"3.8\"",
+    "tortoise-orm[accel]>=0.18.0"
 ]
 
 [project.urls]
@@ -31,9 +30,10 @@ changelog = "https://github.com/thearchitector/casbin-tortoise-adapter/blob/main
 [tool.pdm]
 [tool.pdm.dev-dependencies]
 dev = [
-    "pytest<8.0,>=7.1",
-    "pytest-asyncio>=0.15.1",
-    "asyncpg>=0.28.0",
+    "pytest~=7.0",
+    "pluggy~=1.2.0",
+    "pytest-asyncio~=0.21.0",
+    "asyncpg~=0.28.0",
 ]
 
 [tool.pytest.ini_options]

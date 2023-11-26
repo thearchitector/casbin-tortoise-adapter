@@ -39,7 +39,7 @@ class TortoiseAdapter(BatchAdapter, UpdateAdapter, FilteredAdapter, Adapter):
         self.modelclass: Type[CasbinRule] = modelclass
         self._filtered: bool = False
 
-    async def load_policy(self, model: Model) -> None:
+    async def load_policy(self, model: Model) -> None:  # pyright: ignore
         """Loads all policy rules from storage."""
         for line in await self.modelclass.all():
             load_policy_line(str(line), model)

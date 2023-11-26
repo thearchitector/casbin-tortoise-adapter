@@ -36,19 +36,21 @@ jobs:
           POSTGRES_PASSWORD: "password"
           POSTGRES_DB: "casbin_rule"
         options: >-
-          --health-cmd "pg_isready"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up PDM
-        uses: pdm-project/setup-pdm@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: true
+          cache: "pip"
       - name: Install dependencies
-        run: pdm install -G :all
+        run: pip install -r requirements.txt
       - name: Run tests
-        run: pdm run pytest
+        run: pytest
+        env:
+          POSTGRES_HOST: "localhost"

@@ -13,11 +13,14 @@ repos:
         require_serial: true
         args: ["--explicit-package-bases", "--check-untyped-defs"]
         additional_dependencies:
-          [
-            "asynccasbin<2.0.0,>=1.1.2",
-            'tortoise-orm[accel]>=0.19.1; python_version < "3.8"',
-            'tortoise-orm[accel]>=0.20; python_version >= "3.8"',
-          ]
+          ["asynccasbin<2.0.0,>=1.1.2", "tortoise-orm[accel]>=0.18.0"]
+  - repo: https://github.com/pdm-project/pdm
+    rev: 2.10.4
+    hooks:
+      - id: pdm-lock-check
+      - id: pdm-export
+        args: ["-G", ":all", "--pyproject", "-o", "requirements.txt"]
+        files: ^pdm.lock$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:

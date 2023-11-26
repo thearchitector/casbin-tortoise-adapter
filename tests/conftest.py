@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 import pytest
 from casbin import Enforcer
@@ -16,11 +17,13 @@ def event_loop():
 
 @pytest.fixture(scope="session")
 async def adapter():
+    host: str = os.getenv("POSTGRES_HOST", "postgres")
+
     # connect to db and generate schemas
     await Tortoise.init(
         {
             "connections": {
-                "default": "postgres://postgres:password@postgres:5432/casbin"
+                "default": f"postgres://postgres:password@{host}:5432/casbin"
             },
             "apps": {"my_app": {"models": ["casbin_tortoise_adapter"]}},
         },

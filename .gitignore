@@ -4,7 +4,6 @@
 !.vscode/settings.json
 .pdm-python
 .venv
-pdm.lock
 
 # caches
 .pytest_cache
