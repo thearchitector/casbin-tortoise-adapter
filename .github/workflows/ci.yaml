@@ -3,21 +3,6 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.7"
-      - run: python3 -m pip install mypy
-      - name: Check typing
-        run: mypy --pretty .
-      - name: Check formatting
-        uses: chartboost/ruff-action@v1
-        with:
-          args: check --target-version=py37
-
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -43,13 +28,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v3
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
+          cache: true
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pdm install -G :all --global -p . --no-lock
       - name: Run tests
         run: pytest
         env:
