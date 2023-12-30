@@ -14,12 +14,7 @@ python3 -m pip install --user casbin-tortoise-adapter
 # or via your favorite dependency manager, like PDM
 ```
 
-The current supported databases are [limited by Tortoise ORM](https://tortoise.github.io/databases.html), and include:
-
-- PostgreSQL >= 9.4 (using `asyncpg`)
-- SQLite (using `aiosqlite`)
-- MySQL/MariaDB (using `asyncmy`)
-- Microsoft SQL Server / Oracle (using `asyncodbc`)
+The current supported databases are [limited by Tortoise ORM](https://tortoise.github.io/databases.html).
 
 ## Documentation
 
@@ -32,7 +27,7 @@ A custom Model, combined with advanced configuration like show in the Tortoise O
 ## Basic example
 
 ```python
-from casbin import Enforcer
+from casbin import AsyncEnforcer
 from tortoise import Tortoise
 
 from casbin_tortoise_adapter import CasbinRule, TortoiseAdapter
@@ -46,7 +41,7 @@ async def main()
     await Tortoise.generate_schemas()
 
     adapter = casbin_tortoise_adapter.TortoiseAdapter()
-    e = casbin.Enforcer('path/to/model.conf', adapter, True)
+    e = AsyncEnforcer('path/to/model.conf', adapter)
 
     sub = "alice"  # the user that wants to access a resource.
     obj = "data1"  # the resource that is going to be accessed.

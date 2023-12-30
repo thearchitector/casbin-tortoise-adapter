@@ -2,7 +2,7 @@ import asyncio
 import os
 
 import pytest
-from casbin import Enforcer
+from casbin import AsyncEnforcer
 from tortoise import Tortoise
 
 from casbin_tortoise_adapter import CasbinRule, TortoiseAdapter
@@ -40,11 +40,6 @@ async def adapter():
 
 
 @pytest.fixture
-def enforcer(adapter):
-    yield Enforcer("tests/rbac_model.conf", adapter)
-
-
-@pytest.fixture
 async def mock_data():
     await CasbinRule.all().delete()
     await CasbinRule.bulk_create(
@@ -56,3 +51,10 @@ async def mock_data():
             CasbinRule(ptype="g", v0="alice", v1="data2_admin"),
         ]
     )
+
+
+@pytest.fixture
+async def enforcer(adapter, mock_data):
+    e = AsyncEnforcer("tests/rbac_model.conf", adapter)
+    await e.load_policy()
+    yield e

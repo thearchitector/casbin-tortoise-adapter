@@ -1,21 +1,21 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.1.6
+    rev: v0.1.9
     hooks:
       - id: ruff
         args: ["--fix", "--exit-non-zero-on-fix"]
       - id: ruff-format
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.1
+  - repo: local
     hooks:
       - id: mypy
+        name: mypy
+        language: system
+        entry: .venv/Scripts/python.exe -m mypy
+        types: [python]
         exclude: ^tests
         require_serial: true
-        args: ["--explicit-package-bases", "--check-untyped-defs"]
-        additional_dependencies:
-          ["asynccasbin<2.0.0,>=1.1.2", "tortoise-orm[accel]>=0.18.0"]
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.10.4
+    rev: 2.11.1
     hooks:
       - id: pdm-lock-check
       - id: pdm-export

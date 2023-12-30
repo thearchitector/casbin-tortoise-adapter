@@ -11,10 +11,42 @@ def test_bad_modelclass():
         TortoiseAdapter(modelclass=BadModel)
 
 
-@pytest.mark.asyncio
-async def test_enforcer_basic(mock_data, enforcer):
-    await enforcer.load_policy()
+@pytest.mark.parametrize(
+    "rule,string",
+    (
+        (
+            ("p", "alice", "data1", "read"),
+            "p, alice, data1, read",
+        ),
+        (
+            ("p", "bob", "data2", "write"),
+            "p, bob, data2, write",
+        ),
+        (
+            ("p", "data2_admin", "data2", "read"),
+            "p, data2_admin, data2, read",
+        ),
+        (
+            ("p", "data2_admin", "data2", "write"),
+            "p, data2_admin, data2, write",
+        ),
+        (
+            ("g", "alice", "data2_admin", None),
+            "g, alice, data2_admin",
+        ),
+    ),
+)
+def test_str(rule, string):
+    ptype, v0, v1, v2 = rule
+    assert str(CasbinRule(ptype=ptype, v0=v0, v1=v1, v2=v2)) == string
 
+
+def test_repr():
+    rule = CasbinRule(ptype="p", v0="alice", v1="data1", v2="read")
+    assert repr(rule) == '<CasbinRule None: "p, alice, data1, read">'
+
+
+async def test_enforcer_basic(enforcer):
     assert enforcer.enforce("alice", "data1", "read")
     assert not enforcer.enforce("alice", "data1", "write")
     assert not enforcer.enforce("bob", "data1", "read")
@@ -25,7 +57,6 @@ async def test_enforcer_basic(mock_data, enforcer):
     assert enforcer.enforce("alice", "data2", "write")
 
 
-@pytest.mark.asyncio
 async def test_add_policy(enforcer):
     assert not enforcer.enforce("eve", "data3", "read")
     res = await enforcer.add_policies(
@@ -36,15 +67,13 @@ async def test_add_policy(enforcer):
     assert enforcer.enforce("eve", "data4", "read")
 
 
-@pytest.mark.asyncio
 async def test_add_policies(enforcer):
-    assert not enforcer.enforce("eve", "data3", "read")
-    res = await enforcer.add_permission_for_user("eve", "data3", "read")
+    assert not enforcer.enforce("dave", "data3", "read")
+    res = await enforcer.add_permission_for_user("dave", "data3", "read")
     assert res
-    assert enforcer.enforce("eve", "data3", "read")
+    assert enforcer.enforce("dave", "data3", "read")
 
 
-@pytest.mark.asyncio
 async def test_save_policy(enforcer):
     assert not enforcer.enforce("alice", "data4", "read")
 
@@ -55,7 +84,6 @@ async def test_save_policy(enforcer):
     assert enforcer.enforce("alice", "data4", "read")
 
 
-@pytest.mark.asyncio
 async def test_remove_policy(enforcer):
     assert not enforcer.enforce("alice", "data5", "read")
     await enforcer.add_permission_for_user("alice", "data5", "read")
@@ -64,7 +92,6 @@ async def test_remove_policy(enforcer):
     assert not enforcer.enforce("alice", "data5", "read")
 
 
-@pytest.mark.asyncio
 async def test_remove_policies(enforcer):
     assert not enforcer.enforce("alice", "data5", "read")
     assert not enforcer.enforce("alice", "data6", "read")
@@ -80,10 +107,7 @@ async def test_remove_policies(enforcer):
     assert not enforcer.enforce("alice", "data6", "read")
 
 
-@pytest.mark.asyncio
-async def test_remove_filtered_policy(mock_data, enforcer):
-    await enforcer.load_policy()
-
+async def test_remove_filtered_policy(enforcer):
     assert enforcer.enforce("alice", "data1", "read")
     await enforcer.remove_filtered_policy(1, "data1")
     assert not enforcer.enforce("alice", "data1", "read")
@@ -104,28 +128,7 @@ async def test_remove_filtered_policy(mock_data, enforcer):
     assert not enforcer.enforce("alice", "data2", "write")
 
 
-def test_str(enforcer):
-    rule = CasbinRule(ptype="p", v0="alice", v1="data1", v2="read")
-    assert str(rule) == "p, alice, data1, read"
-    rule = CasbinRule(ptype="p", v0="bob", v1="data2", v2="write")
-    assert str(rule) == "p, bob, data2, write"
-    rule = CasbinRule(ptype="p", v0="data2_admin", v1="data2", v2="read")
-    assert str(rule) == "p, data2_admin, data2, read"
-    rule = CasbinRule(ptype="p", v0="data2_admin", v1="data2", v2="write")
-    assert str(rule) == "p, data2_admin, data2, write"
-    rule = CasbinRule(ptype="g", v0="alice", v1="data2_admin")
-    assert str(rule) == "g, alice, data2_admin"
-
-
-def test_repr(enforcer):
-    rule = CasbinRule(ptype="p", v0="alice", v1="data1", v2="read")
-    assert repr(rule) == '<CasbinRule None: "p, alice, data1, read">'
-
-
-@pytest.mark.asyncio
-async def test_filtered_policy(mock_data, enforcer):
-    await enforcer.load_policy()
-
+async def test_filtered_policy(enforcer):
     filter = RuleFilter()
     filter.ptype = ["p"]
     await enforcer.load_filtered_policy(filter)
@@ -246,10 +249,7 @@ async def test_filtered_policy(mock_data, enforcer):
     assert enforcer.enforce("data2_admin", "data2", "write")
 
 
-@pytest.mark.asyncio
-async def test_update_policy(mock_data, enforcer):
-    await enforcer.load_policy()
-
+async def test_update_policy(enforcer):
     assert enforcer.enforce("alice", "data1", "read")
     await enforcer.update_policy(
         ["alice", "data1", "read"], ["alice", "data1", "no_read"]
@@ -280,8 +280,7 @@ async def test_update_policy(mock_data, enforcer):
     assert not enforcer.enforce("bob", "data2", "write")
 
 
-@pytest.mark.asyncio
-async def test_update_policies(mock_data, enforcer):
+async def test_update_policies(enforcer):
     old_rule_0 = ["alice", "data1", "read"]
     old_rule_1 = ["bob", "data2", "write"]
     old_rule_2 = ["data2_admin", "data2", "read"]
@@ -295,7 +294,6 @@ async def test_update_policies(mock_data, enforcer):
     old_rules = [old_rule_0, old_rule_1, old_rule_2, old_rule_3]
     new_rules = [new_rule_0, new_rule_1, new_rule_2, new_rule_3]
 
-    await enforcer.load_policy()
     await enforcer.update_policies(old_rules, new_rules)
 
     assert not enforcer.enforce("alice", "data1", "read")
@@ -309,3 +307,10 @@ async def test_update_policies(mock_data, enforcer):
 
     assert not enforcer.enforce("data2_admin", "data2", "write")
     assert enforcer.enforce("data2_admin", "data_test", "write")
+
+
+async def test_update_filtered_policies(enforcer):
+    assert not enforcer.enforce("alice", "data1", "write")
+
+    await enforcer.update_filtered_policies([["alice", "data1", "write"]], 0, "alice")
+    assert enforcer.enforce("alice", "data1", "write")
