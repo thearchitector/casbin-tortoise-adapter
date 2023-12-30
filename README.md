@@ -7,6 +7,8 @@
 
 This is an asynchronous adapter for [pycasbin](https://pypi.org/project/casbin) using Tortoise ORM.
 
+Supports Python 3.7+.
+
 ## Installation
 
 ```sh
