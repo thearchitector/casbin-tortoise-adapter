@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.0] - 2023-12-31
+
+### Changed
+
+- Replaced `AsyncCasbin` with `PyCasbin` for streamlined asyncio support. ([I.#7](https://github.com/thearchitector/casbin-tortoise-adapter/issues/7))
+
+### Fixed
+
+- Boolean return types from adapter function stub implementations.
+- More static typing.
+- Support for Python 3.12.
+
 ## [1.2.2] - 2023-11-24
 
 ### Fixed
